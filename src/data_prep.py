@@ -75,6 +75,14 @@ class SafeScaler:
     def transform(self, x):
         return (x - self.mean) / self.std
 
+    def inverse_transform(self, y):
+        """
+        Обратное преобразование.
+        Если transform: y = (x - mean) / std,
+        то inverse: x = y * std + mean
+        """
+        return y * self.std + self.mean
+
 class ScenarioDataset(Dataset):
     def __init__(self, df, prop_cols, fit_scaler=False):
         self.df = df
