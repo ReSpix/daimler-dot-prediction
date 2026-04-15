@@ -99,7 +99,7 @@ class ScenarioDataset(Dataset):
             n = len(grp)
             for j, comp_name in enumerate(grp['Компонент'].values):
                 comp_type = next((k for k in self.type_to_id if comp_name.startswith(k)), -1)
-                self.type_ids[i, j] = self.type_to_id.get(comp_type, 9)  # 9 = unknown
+                self.type_ids[i, j] = self.type_to_id.get(str(comp_type), 9)  # 9 = unknown
 
         has_targets = 'target_vis' in df.columns
         self.targets = np.zeros((n_scenarios, 2), dtype=np.float32) if has_targets else None
@@ -114,7 +114,7 @@ class ScenarioDataset(Dataset):
             self.conditions[i, 1] = grp['time'].iloc[0]
             self.conditions[i, 2] = grp['biofuel'].iloc[0]
             self.conditions[i, 3] = grp['catalyst'].iloc[0]
-            if has_targets:
+            if self.targets is not None:
                 self.targets[i, 0] = grp['target_vis'].iloc[0]
                 self.targets[i, 1] = grp['target_ox'].iloc[0]
 
@@ -134,7 +134,7 @@ class ScenarioDataset(Dataset):
             self.cond_scaler.fit(self.conditions)
             self.conditions = self.cond_scaler.transform(self.conditions)
             
-            if has_targets:
+            if self.targets is not None:
                 self.target_scaler.fit(self.targets)
                 self.targets = self.target_scaler.transform(self.targets)
 
